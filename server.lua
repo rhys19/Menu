@@ -56,3 +56,56 @@ end)
 -- Threads
 
 -- Functions
+
+	---------------------------------- USEFUL
+	
+	function mysplit(inputstr, sep)
+		if sep == nil then
+			sep = "%s"
+		end
+		local t={} ; i=1
+		for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+			t[i] = str
+			i = i + 1
+		end
+		return t
+	end
+	
+	
+	local verFile = LoadResourceFile(GetCurrentResourceName(), "version.json")
+	local curVersion = json.decode(verFile).version
+	local updatePath = "/rhys19/Menu"
+	local resourceName = "Menu ("..GetCurrentResourceName()..")"
+	function checkVersion(err,response, headers)
+		local data = json.decode(response)
+		
+		
+		if curVersion ~= data.version and tonumber(curVersion) < tonumber(data.version) then
+			print("\n--------------------------------------------------------------------------")
+			print("\n"..resourceName.." is outdated.\nCurrent Version: "..data.version.."\nYour Version: "..curVersion.."\nPlease update it from https://github.com"..updatePath.."")
+			print("\nUpdate Changelog:\n"..data.changelog)
+			print("\n--------------------------------------------------------------------------")
+		elseif tonumber(curVersion) > tonumber(data.version) then
+			print("Your version of "..resourceName.." seems to be higher than the current version.")
+		else
+			print(resourceName.." is up to date!")
+		end
+		local nativeuitest = LoadResourceFile("NativeUI", "__resource.lua")
+		if not nativeuitest then
+			print("\n--------------------------------------------------------------------------")
+			print("\nNativeUI is not installed on this Server, this means that EasyAdmin will not work *at all*, please download and install it from:")
+			print("\nhttps://github.com/FrazzIe/NativeUILua")
+			print("\n--------------------------------------------------------------------------")
+		else
+			SaveResourceFile("NativeUI", "__resource.lua", nativeuitest, -1)
+		end
+		SetTimeout(3600000, checkVersionHTTPRequest)
+	end
+	
+	function checkVersionHTTPRequest()
+		PerformHttpRequest("https://raw.githubusercontent.com/rhys19/Menu/master/version.json", checkVersion, "GET")
+	end
+	
+	---------------------------------- END USEFUL
+	checkVersionHTTPRequest()
+end)
