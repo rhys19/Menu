@@ -58,7 +58,7 @@ end)
 -- Functions
 
 	---------------------------------- USEFUL
-	
+	--[[
 	function mysplit(inputstr, sep)
 		if sep == nil then
 			sep = "%s"
@@ -107,5 +107,5 @@ end)
 	end
 	
 	---------------------------------- END USEFUL
-	checkVersionHTTPRequest()
+	checkVersionHTTPRequest()--]]
 end)
