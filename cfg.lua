@@ -1,4 +1,7 @@
-Config = {}
+-- Config Isn't Working Yet!
+
+
+--[[Config = {}
 
 Config.servername {
 "test"
@@ -15,4 +18,4 @@ Config.peds {
 
 
 
-}
+}--]]
