@@ -28,7 +28,7 @@ end)
 
 RegisterServerEvent('dragServer')
 AddEventHandler('dragServer', function(closestID)
-	TriggerClientEvent('dragClient', closestID, source)
+	TriggerClientEvent('dragClient', closestID)
 end)
 
 RegisterServerEvent('unDragServer')
