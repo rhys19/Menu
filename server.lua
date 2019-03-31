@@ -1,17 +1,17 @@
---[[
+RegisterServerEvent('commandEnabled')
+AddEventHandler('commandEnabled', function(commandEnabled)
+	commandEnabled = commandEnabled
+end)
 
--------------------------------------------------------
-Coded By Rhys19 © 2018
-Functions are not copied they are off a gta5 animation site functions are built together from docs.fivem.net & the Native Reference
-Lock Code By Knobs!
-Radar By Rhys19 (Coming Soon)
-Fix is very simple to create!
-Door controls by rhys19 -- they are simple to code aswell!
--------------------------------------------------------
+RegisterServerEvent('getkey')
+AddEventHandler('getkey', function(MenuKey)
+	MenuKey = MenuKey
+end)
 
---]]
-
--- Variables
+RegisterServerEvent('getTitle')
+AddEventHandler('getTitle', function(title)
+	title = title
+end)
 
 -- Commands
 
@@ -28,7 +28,7 @@ end)
 
 RegisterServerEvent('dragServer')
 AddEventHandler('dragServer', function(closestID)
-	TriggerClientEvent('dragClient', closestID)
+	TriggerClientEvent('dragClient', closestID, source)
 end)
 
 RegisterServerEvent('unDragServer')
@@ -53,7 +53,8 @@ end)
 RegisterNetEvent('panicServer')
 AddEventHandler('panicServer', function(street)
 	_source = source
-    TriggerClientEvent('chatMessage', -1, 'Police System', {255, 255, 255},'Officer ^2' .. GetPlayerName(_source) .. ' ^7Has pushed their panic button. Location: ' .. street)
+    TriggerClientEvent('chatMessage', -1, 'Toolbox', {255, 255, 255},'Officer ^2' .. GetPlayerName(_source) .. ' ^7Has pushed their panic button. Location: ' .. street)
+	TriggerClientEvent('panicButtonSound', -1)
 end)
 
 RegisterServerEvent('showIDServer')
@@ -69,7 +70,10 @@ end)
 -- Threads
 
 -- Functions
--- useful
+
+-- Threads
+
+-- Functions
 
 -- Version Checker do not remove --
 
@@ -79,7 +83,7 @@ local GithubResourceName = 'Menu'
 PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/VERSION', function(Error, NewestVersion, Header)
 	PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/CHANGES', function(Error, Changes, Header)
 		print('\n')
-		print('--------------------------------------------------------------------')
+		print('====================================================================')
 		print('')
 		print('Admin Script')
 		print('')
@@ -89,10 +93,11 @@ PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/V
 		print(' Changelog: ' .. Changes)
 		print('')
 		if CurrentVersion ~= NewestVersion then
-			print('--------------------------------------------------------------------')
+			print('====================================================================')
 		else
-			print('-- Up to date!')
-			print('--------------')
+			print('===================')
+			print('=== Up to date! ===')
+			print('===================')
 		end
 		print('\n')
 end)
