@@ -13,6 +13,7 @@ local title = "my servername menu" -- menu name appears at top of menu
 local control = 244 -- need key ids? get them here: https://rhys19.life/ or https://docs.fivem.net/
 
 local commandEnabled = false -- trigger if you want a command menu with /menu or using a button
+local menuCMD = "menu" -- set your command if the above is true!
 
 steamWhitelist = false -- not implemented not
 pedWhitelist = false -- not implemented not
@@ -328,7 +329,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterCommand('menu', function()
+RegisterCommand(menuCMD, function()
 	if commandEnabled == true then
 	mainMenu:Visible(not mainMenu:Visible())
 		else
