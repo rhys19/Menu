@@ -77,11 +77,13 @@ end)
 
 -- Version Checker do not remove --
 
-local CurrentVersion = '2.4.4'
+local CurrentVersion = '2.4.5'
 local GithubResourceName = 'Menu'
+local versionurl = "https://raw.githubusercontent.com/rhys19/Menu-Stuff/master/VERSION"
+local changesurl = "https://raw.githubusercontent.com/rhys19/Menu-Stuff/master/CHANGES"
 
-PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/VERSION', function(Error, NewestVersion, Header)
-	PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/CHANGES', function(Error, Changes, Header)
+PerformHttpRequest(versionurl, function(Error, NewestVersion, Header)
+	PerformHttpRequest(changesurl, function(Error, Changes, Header)
 		print('\n')
 		print('====================================================================')
 		print('')
@@ -90,7 +92,7 @@ PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/V
 		print('Current Version: ' .. CurrentVersion)
 		print('Newest Version: ' .. NewestVersion)
 		io.write("")
-		print(' Changelog: ' .. Changes)
+		print('Changelog: \n' .. Changes)
 		print('')
 		if CurrentVersion ~= NewestVersion then
 			print('====================================================================')
@@ -100,5 +102,4 @@ PerformHttpRequest('https://raw.githubusercontent.com/rhys19/Menu-stuff/master/V
 			print('===================')
 		end
 		print('\n')
-end)
 end)
