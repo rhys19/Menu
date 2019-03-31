@@ -77,8 +77,9 @@ end)
 
 -- Version Checker do not remove --
 
-local CurrentVersion = '2.4.5'
+local CurrentVersion = '2.4.3'
 local GithubResourceName = 'Menu'
+local resourceName = GetCurrentResourceName()
 local versionurl = "https://raw.githubusercontent.com/rhys19/Menu-Stuff/master/VERSION"
 local changesurl = "https://raw.githubusercontent.com/rhys19/Menu-Stuff/master/CHANGES"
 
@@ -87,7 +88,7 @@ PerformHttpRequest(versionurl, function(Error, NewestVersion, Header)
 		print('\n')
 		print('====================================================================')
 		print('')
-		print('Admin Script')
+		print('Toolbox ('..resourceName..')')
 		print('')
 		print('Current Version: ' .. CurrentVersion)
 		print('Newest Version: ' .. NewestVersion)
@@ -102,4 +103,5 @@ PerformHttpRequest(versionurl, function(Error, NewestVersion, Header)
 			print('===================')
 		end
 		print('\n')
+end)
 end)
