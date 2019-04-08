@@ -324,7 +324,7 @@ Citizen.CreateThread(function()
             mainMenu:Visible(not mainMenu:Visible())
 			--else
 			--return
-			end
+			--end
         end
     end
 end)
@@ -333,7 +333,8 @@ RegisterCommand(menuCMD, function()
 	if commandEnabled == true then
 	mainMenu:Visible(not mainMenu:Visible())
 		else
-			return
+		return
+		end
 	end
 end)
 
