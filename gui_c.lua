@@ -1,3 +1,17 @@
+-- ADMIN SHIT --
+local isAdmin = false
+--[[ isAdmin = false
+
+RegisterNetEvent("sendAdminPermissionToClient")
+AddEventHandler("sendAdminPermissionToClient", function(state)
+    isAdmin = state
+end)--]]
+
+local control = 244 -- set to whatever key you want key ids below
+local title = "Toolbox"
+
+-- need key ids? get them here: https://rhys19.life/ or https://docs.fivem.net/
+
 --[[-----------------------------------------------------
 Coded By Rhys19 © 2018
 Functions are not copied they are off a gta5 animation site functions are built together from docs.fivem.net & the Native Reference
@@ -8,28 +22,96 @@ Door controls by rhys19 -- your litterally just checking if the car has the door
 -------------------------------------------------------
 ]]
 
-local title = "my servername menu" -- menu name appears at top of menu
+--[[ 
+Key IDS {
+	ESC = 322,
+	F1 = 288,
+	F2 = 289,
+	F3 = 170,
+	F5 = 166,
+	F6 = 167,
+	F7 = 168,
+	F8 = 169,
+	F9 = 56,
+	F10 = 57,
+	~ = 243,
+	1 = 157,
+	2 = 158,
+	3 = 160,
+	4 = 164,
+	5 = 165,
+	6 = 159,
+	7 = 161,
+	8 = 162,
+	9 = 163,
+	- = 84 ,
+	= = 83,
+	BACKSPACE = 177,
+	TAB = 37,
+	Q = 44,
+	W = 32,
+	E = 38,
+	R = 45,
+	T = 245,
+	Y = 246,
+	U = 303,
+	P = 199,
+	[ = 39,
+	] = 40,
+	ENTER = 18,
+	CAPS = 137,
+	A = 34,
+	S = 8,
+	D = 9,
+	F = 23,
+	G = 47,
+	H = 74,
+	K = 311,
+	L = 182,
+	LEFTSHIFT = 21,
+	Z = 20,
+	X = 73,
+	C = 26,
+	V = 0,
+	B = 29,
+	N = 249,
+	M = 244,
+	, = 82,
+	. = 81,
+	LEFTCTRL = 36,	
+	LEFTALT = 19,
+	SPACE = 22,
+	RIGHTCTRL = 70,
+	HOME = 213,
+	PAGEUP = 10,
+	PAGEDOWN = 11,
+	DELETE = 178,
+	LEFT = 174,
+	RIGHT = 175,
+	TOP = 27,
+	DOWN = 173,
+	NENTER = 201,
+	N4 = 108,
+	N5 = 60,
+	N6 = 107,
+	N+ = 96,
+	N- = 97,
+	N7 = 117,
+	N8 = 61,
+	N9 = 118
+	},
+]]
 
-local control = 244 -- need key ids? get them here: https://rhys19.life/ or https://docs.fivem.net/
-
-local commandEnabled = false -- trigger if you want a command menu with /menu or using a button
-local menuCMD = "menu" -- set your command if the above is true!
-
-steamWhitelist = false -- not implemented not
-pedWhitelist = false -- not implemented not
-adminWhitelist = true -- not implemented not
-CopWhitelist = true -- not implemented not
-AceWhitelist = false -- not implemented not
-
-isAdmin = false
+--isAdmin = false
 
 _menuPool = NativeUI.CreatePool()
-mainMenu = NativeUI.CreateMenu(title, "~b~Main Menu")
+mainMenu = NativeUI.CreateMenu(title, "~b~Main Menu") -- menu name appears at top of menu
 _menuPool:Add(mainMenu)
 _menuPool:MouseControlsEnabled(false)
 _menuPool:ControlDisablingEnabled(false)
+local fe = false
 
-function VehMenu(menu)
+function AddMenuVeh(menu)
     local submenu = _menuPool:AddSubMenu(menu, "Vehicle")
     for i = 1, 1 do
     	local Item = NativeUI.CreateItem("Lock", "Locks your car!, ~r~Not working yet!")
@@ -67,11 +149,23 @@ function VehMenu(menu)
     		--Do stuff
     		TriggerEvent('fixveh')
     	end
-		local exitMenu = NativeUI.CreateItem("Exit", "Exit the whole menu!")
-		exitMenu.Activated = function(ParentMenu, SelectedItem)
+		local Item8 = NativeUI.CreateItem("~r~Delete~r~", "~r~Delete your Vehicle!")
+		Item8.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		ToggleMenu() -- triggers the close NativeUI Menu function
+    		TriggerEvent('deleteVehicle')
     	end
+    local extra2 = {0,1,2,3,4,5,6,7,8,9}
+    local newitem2 = NativeUI.CreateListItem("Livery", extra2, 1, false)
+   -- menu:AddItem(newitem2)
+	
+	submenu.OnListChange = function(sender, item, index)
+		if item == newitem2 then
+		quantity = item:IndexToItem(index)
+		ShowNotification("~g~ Success: ~w~Livery Changed to ~y~#".. quantity)
+		local Veh = GetVehiclePedIsIn(GetPlayerPed(-1))
+		SetVehicleLivery(Veh, quantity)
+	end
+end
         submenu:AddItem(Item)
 		submenu:AddItem(Item2)
 		submenu:AddItem(Item3)
@@ -79,62 +173,84 @@ function VehMenu(menu)
 		submenu:AddItem(Item5)
 		submenu:AddItem(Item6)
 		submenu:AddItem(Item7)
-		submenu:AddItem(exitMenu)
+		submenu:AddItem(Item8)
+		submenu:AddItem(newitem2)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
     end
 end
 
-function LEOMenu(menu)
+function AddMenuleo(menu)
     local submenu = _menuPool:AddSubMenu(menu, "LEO")
-    for i = 1, 1 do
-    	local Item = NativeUI.CreateItem("Cuff", "Cuffs the nearest player")
+	for i = 1, 1 do
+		--if isAdmin then
+    	local Item = NativeUI.CreateItem("Cuff", "")
 		Item.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('cuffp')
+    		TriggerEvent('cuff')
     	end
-		local Item2 = NativeUI.CreateItem("Drag", "Drags the nearest player")
+		local Item2 = NativeUI.CreateItem("Drag", "")
 		Item2.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('dragp')
+    		TriggerEvent('grabNear')
     	end
-		local Item3 = NativeUI.CreateItem("Put In Vehicle", "Seats the nearest player!")
+		local Item3 = NativeUI.CreateItem("Put In Vehicle", "")
 		Item3.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('seatp')
+    		TriggerEvent('seat')
     	end
-		local Item4 = NativeUI.CreateItem("Take Out Of Vehicle", "Unseats the nearest player!")
+		local Item4 = NativeUI.CreateItem("Take Out Of Vehicle", "")
 		Item4.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('unseatp')
+    		TriggerEvent('unseat')
     	end
-		local Item5 = NativeUI.CreateItem("Uncuff", "Uncuffs the nearest player")
+		local Item5 = NativeUI.CreateItem("Uncuff", "")
 		Item5.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('uncuffp')
+    		TriggerEvent('cuff')
     	end
-		local Item6 = NativeUI.CreateItem("Undrag", "Undrags the nearest player")
+		local Item6 = NativeUI.CreateItem("Undrag", "")
 		Item6.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('undragp')
+    		TriggerEvent('grabNear')
     	end
-		local Item7 = NativeUI.CreateItem("Radar", "Toggle the Radar Menu")
+		local Item7 = NativeUI.CreateItem("unrack", "unrack your carbine")
 		Item7.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		--TriggerEvent('toggleMenu')
-			ShowNotification('~r~Not working yet!, ~g~ New radar by Rhys19 Coming soon!')
+    		TriggerEvent('unrack')
     	end
-		local Item8 = NativeUI.CreateItem("Panic Button", "Trigger your panic button!")
+		local Item8 = NativeUI.CreateItem("rack", "rack your carbine")
 		Item8.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		--TriggerEvent('toggleMenu')
-			TriggerServerEvent('InteractSound_SV:PlayWithinDistance', 0.5, 'sound.ogg', 1.0)
-    	end
-		local Item9 = NativeUI.CreateItem("Exit", "Exit the whole menu!")
+    		TriggerEvent('rack')
+			end
+		local Item9 = NativeUI.CreateItem("Deploy Spikes", "Deploy Spikes")
 		Item9.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		ToggleMenu() -- triggers the close NativeUI Menu function
+    		spikes()
+			end
+		local Item10 = NativeUI.CreateItem("Remove Spikes", "Remove Spikes")
+		Item10.Activated = function(ParentMenu, SelectedItem)
+    		--Do stuff
+    		delspike()
+			end
+		local Item11 = NativeUI.CreateItem("Radar", "Toggle the Radar Menu")
+		Item11.Activated = function(ParentMenu, SelectedItem)
+    		--Do stuff
+    		TriggerEvent('stealthradar:openMenu')
+			ToggleMenu()
     	end
+		local Item12 = NativeUI.CreateItem("Police Megaphone", "")
+		Item12.Activated = function(ParentMenu, SelectedItem)
+    		--Do stuff
+    		TriggerEvent('polspeak:openMenu')
+			ToggleMenu()
+    	end
+		local Item13 = NativeUI.CreateItem("Exit", "")
+		Item13.Activated = function(ParentMenu, SelectedItem)
+    		--Do stuff
+    		ToggleMenu()
+		end
         submenu:AddItem(Item)
 		submenu:AddItem(Item2)
 		submenu:AddItem(Item3)
@@ -144,13 +260,115 @@ function LEOMenu(menu)
 		submenu:AddItem(Item7)
 		submenu:AddItem(Item8)
 		submenu:AddItem(Item9)
+		submenu:AddItem(Item10)
+		submenu:AddItem(Item11)
+		submenu:AddItem(Item12)
+		submenu:AddItem(Item13)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
+			--else
+				--ShowNotification("~R~Insufficient Permissions")
+	--end
     end
 end
 
+RegisterNetEvent('police:toggleDrag')
+AddEventHandler('police:toggleDrag', function(t)
+	if(handCuffed) then
+		drag = not drag
+		officerDrag = t
+	end
+end)
 
-function DoorCTRLMenu(menu)
+function GetPlayers()
+    local players = {}
+
+    for i = 0, 255 do
+        if NetworkIsPlayerActive(i) then
+            table.insert(players, i)
+        end
+    end
+
+    return players
+end
+
+function GetClosestPlayer()
+	local players = GetPlayers()
+	local closestDistance = -1
+	local closestPlayer = -1
+	local ply = PlayerPedId()
+	local plyCoords = GetEntityCoords(ply, 0)
+	
+	for index,value in ipairs(players) do
+		local target = GetPlayerPed(value)
+		if(target ~= ply) then
+			local targetCoords = GetEntityCoords(GetPlayerPed(value), 0)
+			local distance = Vdist(targetCoords["x"], targetCoords["y"], targetCoords["z"], plyCoords["x"], plyCoords["y"], plyCoords["z"])
+			if(closestDistance == -1 or closestDistance > distance) then
+				closestPlayer = value
+				closestDistance = distance
+			end
+		end
+	end
+	
+	return closestPlayer, closestDistance
+end
+
+--[[ seat me start ]]
+
+RegisterNetEvent('seat')
+AddEventHandler('seat',function()
+	local t, distance = GetClosestPlayer()
+	if(distance ~= -1 and distance < 3) then
+		TriggerServerEvent("seatServer", GetPlayerServerId(t))
+	else
+    	ShowNotification("There is no nearby player to seat")
+	end
+end)
+
+RegisterNetEvent('unseat')
+AddEventHandler('unseat',function()
+	local t, distance = GetClosestPlayer()
+	if(distance ~= -1 and distance < 2) then
+		TriggerServerEvent("unSeatServer", GetPlayerServerId(t))
+	else
+    	ShowNotification("There is no nearby player to unseat")
+	end
+end)
+
+RegisterNetEvent('seatClient')
+AddEventHandler('seatClient', function(veh)
+		local pos = GetEntityCoords(PlayerPedId())
+		local entityWorld = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 20.0, 0.0)
+
+		local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, PlayerPedId(), 0)
+		local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
+
+		if vehicleHandle ~= nil then
+			if(IsVehicleSeatFree(vehicleHandle, 1)) then
+				SetPedIntoVehicle(PlayerPedId(), vehicleHandle, 1)
+			else 
+				if(IsVehicleSeatFree(vehicleHandle, 2)) then
+					SetPedIntoVehicle(PlayerPedId(), vehicleHandle, 2)
+			end
+		end
+	end
+end)
+
+RegisterNetEvent('unSeatClient')
+AddEventHandler('unSeatClient', function(t)
+	local ped = GetPlayerPed(t)        
+	ClearPedTasksImmediately(ped)
+	plyPos = GetEntityCoords(PlayerPedId(),  true)
+	local xnew = plyPos.x+2
+	local ynew = plyPos.y+2
+   
+	SetEntityCoords(PlayerPedId(), xnew, ynew, plyPos.z)
+end)
+
+--[[seat me end]]
+
+function AddMenudoorctrl(menu)
     local submenu = _menuPool:AddSubMenu(menu, "Doors")
     for i = 1, 1 do
     	local Item = NativeUI.CreateItem("Toggle Left Front Door", "")
@@ -203,11 +421,6 @@ function DoorCTRLMenu(menu)
     		--Do stuff
     		TriggerEvent('openTrunk')
     	end
-		local exitMenu = NativeUI.CreateItem("Exit", "Exit the whole menu!")
-		exitMenu.Activated = function(ParentMenu, SelectedItem)
-    		--Do stuff
-    		ToggleMenu() -- triggers the close NativeUI Menu function
-    	end
         submenu:AddItem(Item)
 		submenu:AddItem(Item2)
 		submenu:AddItem(Item3)
@@ -216,21 +429,20 @@ function DoorCTRLMenu(menu)
 		submenu:AddItem(Item6)
 		submenu:AddItem(Item7)
 		submenu:AddItem(Item8)
-		submenu:AddItem(exitMenu)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
     end
 end
 
-function CivMenu(menu)
+function AddMenuciv(menu)
     local submenu = _menuPool:AddSubMenu(menu, "Civ")
     for i = 1, 1 do
-    	local Item = NativeUI.CreateItem("Handsup", "Puts your hands up!")
+    	local Item = NativeUI.CreateItem("Handsup", "")
 		Item.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
     		TriggerEvent('Handsup2')
     	end
-		local Item2 = NativeUI.CreateItem("Kneel", "Kneel on the ground with your hands up!")
+		local Item2 = NativeUI.CreateItem("Kneel", "")
 		Item2.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
     		TriggerEvent('KneelHU2')
@@ -250,23 +462,17 @@ function CivMenu(menu)
     		--Do stuff
     		TriggerEvent('cancelEmote')
     	end
-		local exitMenu = NativeUI.CreateItem("Exit", "Exit the whole menu!")
-		exitMenu.Activated = function(ParentMenu, SelectedItem)
-    		--Do stuff
-    		ToggleMenu() -- triggers the close NativeUI Menu function
-    	end
         submenu:AddItem(Item)
 		submenu:AddItem(Item2)
 		submenu:AddItem(Item3)
 		submenu:AddItem(Item4)
 		submenu:AddItem(Item5)
-		submenu:AddItem(exitMenu)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
     end
 end
 
-function LoadoutMenu(menu)
+function AddMenuloadout(menu)
     local submenu = _menuPool:AddSubMenu(menu, "Loadouts")
     for i = 1, 1 do
     	local Item = NativeUI.CreateItem("PD loadout", "Equip the PD Loadout")
@@ -277,7 +483,7 @@ function LoadoutMenu(menu)
 		local Item2 = NativeUI.CreateItem("Sheriff Loadout", "Equip the Sheriff Loadout")
 		Item2.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('leoloadout')
+    		TriggerEvent('bcloadout')
 		end
 		local Item3 = NativeUI.CreateItem("Highway loadout", "Equip the Highway Loadout")
 		Item3.Activated = function(ParentMenu, SelectedItem)
@@ -288,27 +494,71 @@ function LoadoutMenu(menu)
 		Item4.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
     		TriggerEvent('swatloadout')
-    	end
-		local exitMenu = NativeUI.CreateItem("Exit", "Exit the whole menu!")
-		exitMenu.Activated = function(ParentMenu, SelectedItem)
-    		--Do stuff
-    		ToggleMenu() -- triggers the close NativeUI Menu function
-    	end
+		end
+		local NewItem5 = NativeUI.CreateCheckboxItem("Equip Fire Extinguisher", fe, "Equip your Fire Extinguisher!")
+		NewItem5.OnCheckboxChange = function(sender, item, checked_)
+			if item == NewItem5 then
+				fe = checked_
+				ShowNotification("~r~Added Fire Extinguisher ~b~")
+				TriggerEvent("Equip_Fire_Extinguisher")
+			end
+		end
         submenu:AddItem(Item)
 		submenu:AddItem(Item2)
 		submenu:AddItem(Item3)
 		submenu:AddItem(Item4)
-		submenu:AddItem(exitMenu)
+		submenu:AddItem(NewItem5)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
     end
 end
 
-LEOMenu(mainMenu)
-CivMenu(mainMenu)
-VehMenu(mainMenu)
-LoadoutMenu(mainMenu)
-DoorCTRLMenu(mainMenu)
+local emotes = {
+	"Smoke",
+	"Party",
+	"Drink",
+	"Pushups",
+	"Phone",
+	"Weed",
+	"Coffee",
+	"Photo",
+	"Binoculars",
+	"Situps",
+	"Film",
+	"Weights",
+	"Flex",
+	"Stance",
+	"Investigate",
+	"Citation",
+	"Notes",
+	"Weld",
+	"Traffic",
+	"Medic",
+}
+
+function AddMenuEmotes(menu)
+    local submenu = _menuPool:AddSubMenu(menu, "Emotes")
+    for i = 1, 1 do
+		local Item = NativeUI.CreateListItem("Emotes", emotes, 1)
+		menu.OnListChange = function(sender, item, index)
+			if item == Item then
+				emotes = item:IndexToItem(index)
+				ShowNotification("~r~WIP")
+				TriggerEvent(emotes)
+			end
+		end
+        submenu:AddItem(Item)
+		_menuPool:MouseControlsEnabled(false)
+		_menuPool:ControlDisablingEnabled(false)
+    end
+end
+
+AddMenuleo(mainMenu)
+AddMenuciv(mainMenu)
+AddMenuVeh(mainMenu)
+AddMenuloadout(mainMenu)
+AddMenudoorctrl(mainMenu)
+AddMenuEmotes(mainMenu)
 _menuPool:RefreshIndex()
 
 function ToggleMenu()
@@ -319,23 +569,116 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
         _menuPool:ProcessMenus()
-		if commandEnabled == false then
-        if IsControlJustPressed(1, control) and GetLastInputMethod(0) then
+        if IsControlJustPressed(1, control) and GetLastInputMethod( 0 ) then
             mainMenu:Visible(not mainMenu:Visible())
-			--else
-			--return
-			--end
         end
     end
 end)
 
-RegisterCommand(menuCMD, function()
-	if commandEnabled == true then
-	mainMenu:Visible(not mainMenu:Visible())
-		else
-		return
-		end
-	end
+RegisterNetEvent("Equip_Fire_Extinguisher")
+AddEventHandler("Equip_Fire_Extinguisher", function()
+	local ped = GetPlayerPed(PlayerId())
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("weapon_fireextinguisher"), 1000, false)
+	TriggerServerEvent("unrackmsg")
+end)
+
+RegisterNetEvent("unrack")
+AddEventHandler("unrack", function()
+	local ped = GetPlayerPed(PlayerId())
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("COMPONENT_CARBINERIFLE_CLIP_02")) -- Carbine - Extended Clip
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("COMPONENT_AT_AR_FLSH")) -- carbine flashlight
+	--GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("COMPONENT_AT_SCOPE_MEDIUM")) -- carbine scope
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("COMPONENT_AT_AR_AFGRIP")) -- carbine grip
+	TriggerServerEvent("unrackmsg")
+end)
+
+RegisterNetEvent("rack")
+AddEventHandler("rack", function()
+	local ped = GetPlayerPed(PlayerId())
+	RemoveWeaponFromPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"))
+	--TriggerEvent('chatMessage', 'Toolbox', {255, 255, 255}, ''..GetPlayerName(sourceID)..' Has racked their carbine rifle')
+	TriggerServerEvent("rackmsg")
+end)
+
+RegisterNetEvent("leoloadout")
+AddEventHandler("leoloadout", function()
+    local ped = PlayerPedId()
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), 1000, false) -- equip the combat pistol
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), GetHashKey("COMPONENT_AT_PI_FLSH")) -- equip the flashlight attachment!
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_BZGAS"), 1000, false) -- equip BZ Gas
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_NIGHTSTICK"), 1000, false) -- Equip NightStick
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- Equip Flashlight
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- Equip Tazer
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_PUMPSHOTGUN "), 1000, false) -- Equip Shotgun
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_HANDCUFFS "), 1000, false) -- Equip Handcuffs 
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x91109691")) -- Carbine - Extended Clip
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x7BC4CDDC")) -- carbine flashlight
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xA0D89C42")) -- carbine scope
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xC164F53")) -- carbine grip
+    drawNotification("~g~Your LEO loadout has been equipped!")	
+end)
+
+RegisterNetEvent("bcloadout")
+AddEventHandler("bcloadout", function()
+    local ped = PlayerPedId()
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), 1000, false) -- equip the combat pistol
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), GetHashKey("COMPONENT_AT_PI_FLSH")) -- equip the flashlight attachment!
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_BZGAS"), 1000, false) -- equip BZ Gas
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_NIGHTSTICK"), 1000, false) -- Equip NightStick
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- Equip Flashlight
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- Equip Tazer
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_PUMPSHOTGUN"), 1000, false) -- Equip Shotgun
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_PUMPSHOTGUN"), GetHashKey("COMPONENT_AT_AR_FLSH"))
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_HANDCUFFS "), 1000, false) -- Equip Handcuffs 
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x91109691")) -- Carbine - Extended Clip
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x7BC4CDDC")) -- carbine flashlight
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xA0D89C42")) -- carbine scope
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xC164F53")) -- carbine grip
+    drawNotification("~g~Your Sheriff loadout has been equipped!")	
+end)
+
+RegisterNetEvent("fdloadout")
+AddEventHandler("fdloadout", function()
+    local ped = PlayerPedId()
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- equip Flashlight
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- equip stungun
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLAREGUN"), 1000, false) -- equip flaregun
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_MOLOTOV"), 1000, false) -- equip molotov
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FIREEXTINGUISHER"), 1000, false) -- equip fire Extinguisher
+    drawNotification("~g~Your Fire Department loadout has been equipped!")	
+end)
+
+RegisterNetEvent("emsloadout")
+AddEventHandler("emsloadout", function()
+    local ped = PlayerPedId()
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- equip flashlight
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- equip stungun
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_GARBAGEBAG"), 1000, false) -- equip bag 
+    drawNotification("~g~Your EMS loadout has been equipped!")	
+end)
+
+RegisterNetEvent("swatLoadout")
+AddEventHandler("swatLoadout", function()
+    local ped = PlayerPedId()
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), 1000, false) -- equip the combat pistol
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), GetHashKey("COMPONENT_AT_PI_FLSH")) -- equip the flashlight attachment!
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x91109691")) -- Carbine - Extended Clip
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x7BC4CDDC")) -- carbine flashlight
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xA0D89C42")) -- carbine scope
+	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xC164F53")) -- carbine grip
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_BZGAS"), 1000, false) -- equip BZ Gas
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_NIGHTSTICK"), 1000, false) -- Equip NightStick
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- Equip Flashlight
+	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- Equip Tazer
+    drawNotification("~g~Your SWAT loadout has been equipped!")	
 end)
 
 -------------- FUNCTIONS --------------------
@@ -748,69 +1091,13 @@ function GetClosestPlayer()
 	return closestPlayer, closestDistance
 end
 
+function drawNotification(text)
+	SetNotificationTextEntry("STRING")
+	AddTextComponentString(text)
+	DrawNotification(false, false)
+end
+
 -------------------------------------]
-
----------------- LEO loadouts ----------------
-
-
-RegisterNetEvent("leoloadout")
-AddEventHandler("leoloadout", function()
-    local ped = PlayerPedId()
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), 1000, false) -- equip the combat pistol
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), GetHashKey("COMPONENT_AT_PI_FLSH")) -- equip the flashlight attachment!
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_BZGAS"), 1000, false) -- equip BZ Gas
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_NIGHTSTICK"), 1000, false) -- Equip NightStick
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- Equip Flashlight
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- Equip Tazer
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_PUMPSHOTGUN "), 1000, false) -- Equip Shotgun
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_HANDCUFFS "), 1000, false) -- Equip Handcuffs 
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x91109691")) -- Carbine - Extended Clip
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x7BC4CDDC")) -- carbine flashlight
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xA0D89C42")) -- carbine scope
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xC164F53")) -- carbine grip
-    drawNotification("~g~Your LEO loadout has been equipped!")	
-end)
-
-RegisterNetEvent("fdloadout")
-AddEventHandler("fdloadout", function()
-    local ped = PlayerPedId()
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- equip Flashlight
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- equip stungun
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLAREGUN"), 1000, false) -- equip flaregun
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_MOLOTOV"), 1000, false) -- equip molotov
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FIREEXTINGUISHER"), 1000, false) -- equip fire Extinguisher
-    drawNotification("~g~Your Fire Department loadout has been equipped!")	
-end)
-
-RegisterNetEvent("emsloadout")
-AddEventHandler("emsloadout", function()
-    local ped = PlayerPedId()
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- equip flashlight
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- equip stungun
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_GARBAGEBAG"), 1000, false) -- equip bag 
-    drawNotification("~g~Your EMS loadout has been equipped!")	
-end)
-
-RegisterNetEvent("swatLoadout")
-AddEventHandler("swatLoadout", function()
-    local ped = PlayerPedId()
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), 1000, false) -- equip the combat pistol
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_COMBATPISTOL"), GetHashKey("COMPONENT_AT_PI_FLSH")) -- equip the flashlight attachment!
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), 1000, false)
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x91109691")) -- Carbine - Extended Clip
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0x7BC4CDDC")) -- carbine flashlight
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xA0D89C42")) -- carbine scope
-	GiveWeaponComponentToPed(GetPlayerPed(-1), GetHashKey("WEAPON_CARBINERIFLE"), GetHashKey("0xC164F53")) -- carbine grip
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_BZGAS"), 1000, false) -- equip BZ Gas
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLARE"), 1000, false) -- Equip Flare
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_NIGHTSTICK"), 1000, false) -- Equip NightStick
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_FLASHLIGHT"), 1000, false) -- Equip Flashlight
-	GiveWeaponToPed(GetPlayerPed(-1), GetHashKey("WEAPON_STUNGUN"), 1000, false) -- Equip Tazer
-    drawNotification("~g~Your SWAT loadout has been equipped!")	
-end)
 
 ---------------- LEO Functions ----------------
 
@@ -848,30 +1135,53 @@ function GetClosestPlayer()
 	return closestPlayer, closestDistance
 end
 
-RegisterNetEvent('cuffp')
-AddEventHandler('cuffp', function()
+RegisterNetEvent('cuff')
+AddEventHandler('cuff',function()
+	closest, distance = GetClosestPlayer()
+	if distance ~= -1 and distance < 2 then
+		local closestID = GetPlayerServerId(closest)
+		TriggerServerEvent("cuffServer", GetPlayerServerId(t))
+	else
+    	ShowNotification("~r~ ERROR: ~w~There is no nearby player to cuff")
+	end
+end)
+
+RegisterNetEvent('uncuff')
+AddEventHandler('uncuff',function()
+	closest, distance = GetClosestPlayer()
+	if distance ~= -1 and distance < 2 then
+		local closestID = GetPlayerServerId(closest)
+		TriggerServerEvent("unCuffServer", GetPlayerServerId(closestID))
+	else
+    	ShowNotification("~r~ ERROR: ~w~There is no nearby player to uncuff")
+	end
+end)
+
+RegisterNetEvent('cuffClient')
+AddEventHandler('cuffClient', function()
 		closest, distance = GetClosestPlayer()
 		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
-				drawNotification('~g~ SUCCESS: ~w~You cuffed the nearest player. (' .. GetPlayerName(closest) .. ')')	
+			if distance ~= -1 and distance < 3 then
+				ShowNotification("~g~ SUCCESS: ~w~You have cuffed("..GetPlayerName(closest)..")")
 				local closestID = GetPlayerServerId(closest)
 				TriggerServerEvent('cuffServer', closestID)
 			else
-				drawNotification("~r~ ERROR: ~w~Nearest Player is too far away!")	
+				ShowNotification("~r~ ERROR: ~w~There is no nearby player to Cuff!")
 		end
 	end
 end)
 
-RegisterNetEvent('uncuffp')
-AddEventHandler('uncuffp', function()
+RegisterNetEvent('unCuffClient')
+AddEventHandler('unCuffClient', function()
 		closest, distance = GetClosestPlayer()
 		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
+			if distance ~= -1 and distance < 3 then
 				drawNotification('~g~SUCCESS: ~w~You uncuffed the nearest player.  (' .. GetPlayerName(closest) .. ')')
 				local closestID = GetPlayerServerId(closest)
 				TriggerServerEvent('unCuffServer', closestID)
 				else
-				drawNotification('~r~ERROR: ~w~No Player nearby to uncuff!')		
+					ShowNotification("~r~ ERROR: ~w~There is no nearby player to Uncuff!")	
+			
 		end
 	end
 end)
@@ -880,7 +1190,7 @@ RegisterNetEvent('dragp')
 AddEventHandler('dragp', function(source)
 		closest, distance = GetClosestPlayer()
 		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
+			if distance ~= -1 and distance < 3 then
 				local closestID = GetPlayerServerId(closest)
 				local pP = GetPlayerPed(-1)
 				drawNotification('~g~SUCCESS: ~w~You are dragging the nearest player.  (' .. GetPlayerName(closest) .. ')')
@@ -891,52 +1201,25 @@ AddEventHandler('dragp', function(source)
 	end
 end)
 
-RegisterNetEvent('seatp')
-AddEventHandler('seatp', function(source)
-		closest, distance = GetClosestPlayer()
-		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
-				local closestID = GetPlayerServerId(closest)
-				local pP = GetPlayerPed(-1)
-				local veh = GetVehiclePedIsIn(pP, true)
-				drawNotification('~g~SUCCESS: ~w~You forced the player you are dragging into the nearest vehicle.  (' .. GetPlayerName(closest) .. ')')
-				TriggerServerEvent('seatServer', closestID, veh)
-			else
-				drawNotification("~r~ ERROR: ~w~Nearest Player is too far away!")	
-		end
-	end
-end)
-
-RegisterNetEvent('unseatp')
-AddEventHandler('unseatp', function(source)
-		closest, distance = GetClosestPlayer()
-		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
-				local closestID = GetPlayerServerId(closest)
-				drawNotification('~g~SUCCESS: ~w~You forced the player in the nearest vehicle out of the vehicle.  (' .. GetPlayerName(closest) .. ')')
-				TriggerServerEvent('unSeatServer', closestID)
-			else
-				drawNotification("~r~ ERROR: ~w~Nearest Player is too far away!")	
-		end
-	end
-end)
-
 RegisterNetEvent('undragp')
 AddEventHandler('undragp', function()
 		closest, distance = GetClosestPlayer()
 		if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-			if distance -1 and distance < 3 then
+			if distance ~= -1 and distance < 3 then
 			drawNotification('~g~SUCCESS: ~w~You are no longer dragging the nearest player.  (' .. GetPlayerName(closest) .. ')')
 				local closestID = GetPlayerServerId(closest)
 				TriggerServerEvent('unDragServer', closestID)
 			else
-				drawNotification("~r~ ERROR: ~w~Nearest Player is too far away!")
+				TriggerEvent('chatMessage', 'Toolbox', {255, 255, 255}, 'Nearest player is too far away.')
 		end
 	end
 end)
 
 RegisterNetEvent('panicButtonSound', function()
-	TriggerServerEvent('InteractSound_SV:PlayWithinDistance', 0.5, 'sound.ogg', 1.0)
+	SendNUIMessage({
+		playpanicbutton = true,
+		panicbuttonvolume = volume
+	})
 end)
 
 RegisterNetEvent('showIDClient')
@@ -979,16 +1262,6 @@ function GetClosestPlayer()
     return closestPlayer, closestDistance
 end
 
-RegisterNetEvent('rpnameshow')
-AddEventHandler('rpnameshow', function()
-    closest = GetClosestPlayer()
-    if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
-		local closestID = GetPlayerServerId(closest)
-        TriggerServerEvent('showIDMessage', id)
-		else
-		DrawNotification('~r~ERROR: ~w~No one nearby to show your id!')
-    end
-end)
 
 -- Events
 RegisterNetEvent('rpname')
@@ -1018,10 +1291,183 @@ function KeyboardInput(TextEntry, ExampleText, MaxStringLenght)
     end
 end
 
+RegisterNetEvent('rpnameshow')
+AddEventHandler('rpnameshow', function()
+    closest = GetClosestPlayer()
+    if closest ~= nil and DoesEntityExist(GetPlayerPed(closest)) then
+		local closestID = GetPlayerServerId(closest)
+		TriggerEvent('chatMessage', -1, 'ID', {255, 255, 255}, 'Name: ' .. result)
+
+		else
+		DrawNotification('~r~ERROR: ~w~No one nearby to show your id!')
+    end
+end)
+
 function getEntityPlayerAimingAt(player)
 	local result, target = GetEntityPlayerIsFreeAimingAt(player)
 	return target
 end
+
+-- [Credit to Monty Piper]
+
+local hwaycop = GetHashKey("s_m_y_hwaycop_01")
+local cop = GetHashKey("s_m_y_cop_01")
+local sheriff = GetHashKey("s_m_y_sheriff_01")
+local fireman = GetHashKey("s_m_y_fireman_01")
+local medic = GetHashKey("s_m_m_paramedic_01")
+
+
+hat = false
+
+  RegisterNetEvent( 'haton' )
+AddEventHandler( 'haton', function()
+	hat = not hat
+	if(GetEntityModel(PlayerPedId()) == hwaycop) then
+		if hat then
+			SetPedPropIndex(PlayerPedId(), 0, 01, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 0)
+		end
+	elseif(GetEntityModel(PlayerPedId()) == cop) then
+		if hat then
+			SetPedPropIndex(PlayerPedId(), 0, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 0)
+		end
+	elseif(GetEntityModel(PlayerPedId()) == sheriff) then
+		if hat then
+			SetPedPropIndex(PlayerPedId(), 0, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 0)
+		end
+	elseif (GetEntityModel(PlayerPedId()) == fireman) then
+		if hat then
+			SetPedPropIndex(PlayerPedId(), 0, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 0)
+		end
+	elseif (GetEntityModel(PlayerPedId()) == medic) then
+		if hat then
+			SetPedPropIndex(PlayerPedId(), 0, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 0)
+		end
+	end
+end)
+
+vest = false
+	RegisterNetEvent('veston')
+AddEventHandler('veston', function()
+	vest = not vest
+	if (GetEntityModel(PlayerPedId()) == hwaycop) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 8, 1, 1, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	elseif (GetEntityModel(PlayerPedId()) == cop) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 9, 2, 0, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	elseif (GetEntityModel(PlayerPedId()) == sheriff) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 9, 2, 0, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	end
+end)
+
+mask = false
+
+  RegisterNetEvent( 'maskon' )
+AddEventHandler( 'maskon', function()
+	    if (GetEntityModel(PlayerPedId()) == fireman) then
+		mask = not mask
+		if mask then
+			SetPedComponentVariation(PlayerPedId(), 8, 1, 1, 1)
+			SetPlayerInvincible(PlayerPedId(), true)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+			SetPlayerInvincible(PlayerPedId(), false)
+		end
+	end
+end)
+
+gloves = false
+
+  RegisterNetEvent( 'gloveson')
+AddEventHandler( 'gloveson', function()
+	if (GetEntityModel(PlayerPedId()) == medic) then
+		gloves = not gloves
+		if gloves then
+			SetPedComponentVariation(PlayerPedId(), 5, 1, 0, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	end
+end)
+
+vest = false
+	RegisterNetEvent('veston')
+AddEventHandler('veston', function()
+	vest = not vest
+	if (GetEntityModel(PlayerPedId()) == hwaycop) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 8, 1, 1, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	elseif (GetEntityModel(PlayerPedId()) == cop) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 9, 2, 0, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	elseif (GetEntityModel(PlayerPedId()) == sheriff) then
+		if vest then
+			SetPedComponentVariation(PlayerPedId(), 9, 2, 0, 1)
+		else
+			SetPedDefaultComponentVariation(PlayerPedId())
+		end
+	end
+end)
+
+glasses = false
+
+  RegisterNetEvent( 'glasseson' )
+AddEventHandler( 'glasseson', function()
+	glasses = not glasses
+	if(GetEntityModel(PlayerPedId()) == hwaycop) then
+		if glasses then
+			SetPedPropIndex(PlayerPedId(), 1, 0, 1, 2)
+		else
+			ClearPedProp(PlayerPedId(), 1)
+		end
+	elseif(GetEntityModel(PlayerPedId()) == cop) then
+		if glasses then
+			SetPedPropIndex(PlayerPedId(), 1, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 1)
+		end
+	elseif(GetEntityModel(PlayerPedId()) == sheriff) then
+		if glasses then
+			SetPedPropIndex(PlayerPedId(), 1, 1, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 1)
+		end
+	elseif(GetEntityModel(PlayerPedId()) == medic) then
+		if glasses then
+			SetPedPropIndex(PlayerPedId(), 1, 0, 0, 2)
+		else
+			ClearPedProp(PlayerPedId(), 1)
+		end
+	end
+end)
+
+-- [Credit to Monty Piper]
 
 ---------------- LEO Functions ----------------
 
@@ -2079,6 +2525,12 @@ function GetVehicleInDirection( coordFrom, coordTo )
     return vehicle
 end
 
+function ShowNotification( text )
+    SetNotificationTextEntry( "STRING" )
+    AddTextComponentString( text )
+    DrawNotification( false, false )
+end
+
 -- Delete Vehicle End
 
 ---------------- Fix ----------------
@@ -2494,3 +2946,203 @@ function ShowNotification(text)
     AddTextComponentString(text)
     DrawNotification(false, false)
 end
+
+local spikes_deployed = false
+local obj1 = nil
+local obj2 = nil
+local obj3 = nil
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(10)
+        if spikes_deployed then
+            for peeps = 0, 64 do
+                if NetworkIsPlayerActive(GetPlayerFromServerId(peeps)) then
+                    
+                    local currentVeh = GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false)
+                    if currentVeh ~= nil and currentVeh ~= false then
+                        local currentVehcoords = GetEntityCoords(currentVeh, true)
+                        local obj1coords = GetEntityCoords(obj1, true)
+                        local obj2coords = GetEntityCoords(obj2, true)
+                        local obj3coords = GetEntityCoords(obj3, true)
+                        local DistanceBetweenObj1 = Vdist(obj1coords['x'], obj1coords['y'], obj1coords['z'], currentVehcoords['x'], currentVehcoords['y'], currentVehcoords['z'])
+                        local DistanceBetweenObj2 = Vdist(obj2coords['x'], obj2coords['y'], obj2coords['z'], currentVehcoords['x'], currentVehcoords['y'], currentVehcoords['z'])
+                        local DistanceBetweenObj3 = Vdist(obj3coords['x'], obj3coords['y'], obj3coords['z'], currentVehcoords['x'], currentVehcoords['y'], currentVehcoords['z'])
+                        if DistanceBetweenObj1 < 2.2 or DistanceBetweenObj2 < 2.2 or DistanceBetweenObj3 < 2.2 then
+                            
+							TriggerServerEvent("police:spikes", currentVeh, peeps)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        if spikes_deployed then
+        	local obj1coords = GetEntityCoords(obj1, true)
+			if GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1)), obj1coords.x, obj1coords.y, obj1coords.z, true) > 100 then -- if the player is too far from his Spikes
+           		SetEntityAsMissionEntity(obj1, false, false)
+           		SetEntityAsMissionEntity(obj2, false, false)
+           		SetEntityAsMissionEntity(obj3, false, false)
+           		SetEntityVisible(obj1, false)
+           		SetEntityVisible(obj2, false)
+           		SetEntityVisible(obj3, false)
+           		DeleteObject(obj1)
+           		DeleteObject(obj2)
+           		DeleteObject(obj3)
+                DeleteEntity(obj1)
+                DeleteEntity(obj2)
+                DeleteEntity(obj3)
+                obj1 = nil
+                obj2 = nil
+                obj3 = nil
+                exports.pNotify:SendNotification({text = "Removing spikes! (D>100)",type = "error",queue = "left",timeout = 3000,layout = "centerRight"})
+                spikes_deployed = false
+        	end
+        end
+	end
+end)
+
+RegisterNetEvent("police:dietyres")
+AddEventHandler("police:dietyres", function(currentVeh)
+    SetVehicleTyreBurst(currentVeh, 0, false, 1000.0)
+    SetVehicleTyreBurst(currentVeh, 1, false, 1000.0)
+    SetVehicleTyreBurst(currentVeh, 2, false, 1000.0)
+    SetVehicleTyreBurst(currentVeh, 3, false, 1000.0)
+    SetVehicleTyreBurst(currentVeh, 4, false, 1000.0)
+    SetVehicleTyreBurst(currentVeh, 5, false, 1000.0)
+    exports.pNotify:SendNotification({text = "You hit a spike strip! Bad luck.",type = "error",queue = "left",timeout = 3000,layout = "centerRight"})
+    Citizen.Wait(1000)
+    SetEntityAsMissionEntity(obj1, false, false)
+    SetEntityAsMissionEntity(obj2, false, false)
+    SetEntityAsMissionEntity(obj3, false, false)
+    SetEntityVisible(obj1, false)
+    SetEntityVisible(obj2, false)
+    SetEntityVisible(obj3, false)
+    DeleteObject(obj1)
+    DeleteObject(obj2)
+    DeleteObject(obj3)
+    DeleteEntity(obj1)
+    DeleteEntity(obj2)
+    DeleteEntity(obj3)
+    obj1 = nil
+    obj2 = nil
+    obj3 = nil
+    spikes_deployed = false
+end)
+
+RegisterNetEvent("police:dietyres2")
+AddEventHandler("police:dietyres2", function(peeps)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 0, false, 1000.0)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 1, false, 1000.0)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 2, false, 1000.0)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 3, false, 1000.0)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 4, false, 1000.0)
+    SetVehicleTyreBurst(GetVehiclePedIsIn(GetPlayerPed(GetPlayerFromServerId(peeps)), false), 5, false, 1000.0)
+end)
+
+--=============================================================cALL IT
+
+function loadAnimDict(dict)
+	while(not HasAnimDictLoaded(dict)) do
+		RequestAnimDict(dict)
+		Citizen.Wait(1)
+	end
+end
+
+function doAnimation()
+	local ped 	  = GetPlayerPed(-1)
+	local coords  = GetEntityCoords(ped)
+
+	--FreezeEntityPosition(ped, true)
+	loadAnimDict("pickup_object")
+	TaskPlayAnim(ped, "pickup_object", "pickup_low", 1.0, 1, -1, 33, 0, 0, 0, 0)
+end
+
+function spikes()
+	TriggerEvent("police:Deploy")
+end
+
+function delspike()
+	TriggerEvent("delspikes")
+end
+
+RegisterNetEvent("police:Deploy")
+AddEventHandler("police:Deploy", function()
+    Citizen.CreateThread(function()
+        if not spikes_deployed then
+            local spikes = GetHashKey("p_stinger_04")
+            RequestModel(spikes)
+            while not HasModelLoaded(spikes) do
+                Citizen.Wait(0)
+            end
+            exports.pNotify:SendNotification({text = "Deploying spikes!",type = "error",queue = "left",timeout = 3000,layout = "centerRight"}) 
+            doAnimation()
+            Citizen.Wait(1700)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+			--FreezeEntityPosition(GetPlayerPed(-1), false)
+			Citizen.Wait(250)
+            local playerheading = GetEntityHeading(GetPlayerPed(-1))
+            coords1 = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 3, 10, -0.7)
+            coords2 = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0, -5, -0.5)
+            obj1 = CreateObject(spikes, coords1['x'], coords1['y'], coords1['z'], true, true, true)
+            obj2 = CreateObject(spikes, coords2['x'], coords2['y'], coords2['z'], true, true, true)
+            obj3 = CreateObject(spikes, coords2['x'], coords2['y'], coords2['z'], true, true, true)
+			SetEntityHeading(obj1, playerheading)
+            SetEntityHeading(obj2, playerheading)
+            SetEntityHeading(obj3, playerheading)
+            AttachEntityToEntity(obj1, GetPlayerPed(-1), 1, 0.0, 4.0, 0.0, 0.0, -90.0, 0.0, true, true, false, false, 2, true)
+            AttachEntityToEntity(obj2, GetPlayerPed(-1), 1, 0.0, 8.0, 0.0, 0.0, -90.0, 0.0, true, true, false, false, 2, true)
+            AttachEntityToEntity(obj3, GetPlayerPed(-1), 1, 0.0, 12.0, 0.0, 0.0, -90.0, 0.0, true, true, false, false, 2, true)
+            Citizen.Wait(10)
+            DetachEntity(obj1, true, true)
+            DetachEntity(obj2, true, true)
+            DetachEntity(obj3, true, true)
+            spikes_deployed = true
+        else
+        	spikes_deployed = false
+            exports.pNotify:SendNotification({text = "Removing spikes!",type = "error",queue = "left",timeout = 3000,layout = "centerRight"}) 
+            doAnimation()
+            Citizen.Wait(1700)
+            ClearPedTasksImmediately(GetPlayerPed(-1))
+			--FreezeEntityPosition(GetPlayerPed(-1), false)
+			Citizen.Wait(200)
+            SetEntityCoords(obj1, -5000.0, -5000.0, 20.0, true, false, false, true)
+            SetEntityCoords(obj2, -5000.0, -5000.0, 20.0, true, false, false, true)
+            SetEntityCoords(obj3, -5000.0, -5000.0, 20.0, true, false, false, true)
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj1))
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj2))
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj3))
+            obj1 = nil
+            obj2 = nil
+            obj3 = nil
+        end
+	end)
+end)
+
+RegisterNetEvent("delspikes")
+AddEventHandler("delspikes", function()
+spikes_deployed = false
+exports.pNotify:SendNotification({text = "Removing spikes!",type = "error",queue = "left",timeout = 3000,layout = "centerRight"}) 
+doAnimation()
+Citizen.Wait(1700)
+ ClearPedTasksImmediately(GetPlayerPed(-1))
+Citizen.Wait(200)
+            SetEntityCoords(obj1, -5000.0, -5000.0, 20.0, true, false, false, true)
+            SetEntityCoords(obj2, -5000.0, -5000.0, 20.0, true, false, false, true)
+            SetEntityCoords(obj3, -5000.0, -5000.0, 20.0, true, false, false, true)
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj1))
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj2))
+            Citizen.InvokeNative(0xB736A491E64A32CF, Citizen.PointerValueIntInitialized(obj3))
+            obj1 = nil
+            obj2 = nil
+            obj3 = nil
+end)
+
+RegisterNetEvent("sendAcePermissionToClient")
+AddEventHandler("sendAcePermissionToClient", function(state)
+    isAdmin = state
+end)
