@@ -540,13 +540,50 @@ function AddMenuEmotes(menu)
     local submenu = _menuPool:AddSubMenu(menu, "Emotes")
     for i = 1, 1 do
 		local Item = NativeUI.CreateListItem("Emotes", emotes, 1)
-		menu.OnListChange = function(sender, item, index)
-			if item == Item then
-				emotes = item:IndexToItem(index)
-				ShowNotification("~r~WIP")
-				TriggerEvent(emotes)
+		Item.OnListChanged = function(ParentMenu, SelectedItem, Index)
+				local Item = SelectedItem:IndexToItem(Index)
+				if Item == "Smoke" then
+				TriggerEvent("Smoke")
+				elseif Item == "Party" then
+					TriggerEvent("Party")
+				elseif Item == "Drink" then
+					TriggerEvent("Drink")
+				elseif Item == "Pushups" then
+					TriggerEvent("Pushups")
+				elseif Item == "Phone" then
+					TriggerEvent("Phone")
+				elseif Item == "Weed" then
+					TriggerEvent("Weed")
+				elseif Item == "Coffee" then
+					TriggerEvent("Coffee")
+				elseif Item == "Photo" then
+					TriggerEvent("Photo")
+				elseif Item == "Binoculars" then
+					TriggerEvent("Binoculars")
+				elseif Item == "Situps" then
+					TriggerEvent("Situps")
+				elseif Item == "Film" then
+					TriggerEvent("Film")
+				elseif Item == "Weights" then
+					TriggerEvent("Weights")
+				elseif Item == "Flex" then
+					TriggerEvent("Flex")
+				elseif Item == "Stance" then
+					TriggerEvent("Stance")
+				elseif Item == "Investigate" then
+					TriggerEvent("Investigate")
+				elseif Item == "Citation" then
+					TriggerEvent("Citation")
+				elseif Item == "Notes" then
+					TriggerEvent("Notes")
+				elseif Item == "Weld" then
+					TriggerEvent("Weld")
+				elseif Item == "Traffic" then
+					TriggerEvent("Traffic")
+				elseif Item == "Medic" then
+					TriggerEvent("Medic")
+				end
 			end
-		end
         submenu:AddItem(Item)
 		_menuPool:MouseControlsEnabled(false)
 		_menuPool:ControlDisablingEnabled(false)
