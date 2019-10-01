@@ -237,7 +237,7 @@ function AddMenuleo(menu)
 		local Item11 = NativeUI.CreateItem("Radar", "Toggle the Radar Menu")
 		Item11.Activated = function(ParentMenu, SelectedItem)
     		--Do stuff
-    		TriggerEvent('stealthradar:openMenu')
+    		TriggerEvent('wk:radarRC')
 			ToggleMenu()
     	end
 		local Item12 = NativeUI.CreateItem("Police Megaphone", "")
